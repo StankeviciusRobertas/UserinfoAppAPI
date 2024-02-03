@@ -1,0 +1,55 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UserinfoApp.API.Validators
+{
+    public class PasswordValidatorAttribute : ValidationAttribute
+    {
+        public int MinimumLength { get; set; } = 4;
+        public bool RequireUppercase { get; set; } = false;
+        public bool RequireLowercase { get; set; } = false;
+        public bool RequireDigit { get; set; } = false;
+        public bool RequireSpecialCharacter { get; set; } = false;
+
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value == null || string.IsNullOrEmpty(value.ToString()))
+            {
+                return new ValidationResult("Password is required.");
+            }
+
+            var password = value.ToString();
+
+            if (string.IsNullOrEmpty(password))
+            {
+                return new ValidationResult("Password is required.");
+            }
+
+            if (password.Length < MinimumLength)
+            {
+                return new ValidationResult($"Password must be at least {MinimumLength} characters long.");
+            }
+
+            if (RequireUppercase && !password.Any(char.IsUpper))
+            {
+                return new ValidationResult("Password must contain at least one uppercase letter.");
+            }
+
+            if (RequireLowercase && !password.Any(char.IsLower))
+            {
+                return new ValidationResult("Password must contain at least one lowercase letter.");
+            }
+
+            if (RequireDigit && !password.Any(char.IsDigit))
+            {
+                return new ValidationResult("Password must contain at least one digit.");
+            }
+
+            if (RequireSpecialCharacter && password.All(char.IsLetterOrDigit))
+            {
+                return new ValidationResult("Password must contain at least one special character.");
+            }
+
+            return ValidationResult.Success;
+        }
+    }
+}
