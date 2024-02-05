@@ -11,7 +11,7 @@ using UserinfoApp.DAL;
 namespace UserinfoApp.DAL.Migrations
 {
     [DbContext(typeof(UserinfoAppDbContext))]
-    [Migration("20240203074542_Initial")]
+    [Migration("20240205182404_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -141,8 +141,9 @@ namespace UserinfoApp.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PersonalCode")
-                        .HasColumnType("int");
+                    b.Property<string>("PersonalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()

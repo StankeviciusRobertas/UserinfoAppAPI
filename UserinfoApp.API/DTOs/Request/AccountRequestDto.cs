@@ -27,10 +27,10 @@ namespace UserinfoApp.API.DTOs.Request
         //[EmailAddress]
         //public string? Email { get; set; }
 
-        /// <summary>
-        /// Role of the account
-        /// </summary>
-        [RoleValidator]
-        public string? Role { get; set; }
+        ///// <summary>
+        ///// Role of the account
+        ///// </summary>
+        //[RoleValidator]
+        //public string? Role { get; set; }
     }
 }

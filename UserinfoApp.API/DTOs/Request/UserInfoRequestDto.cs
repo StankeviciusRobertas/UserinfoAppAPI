@@ -3,6 +3,9 @@ using UserinfoApp.API.Validators;
 
 namespace UserinfoApp.API.DTOs.Request
 {
+    /// <summary>
+    /// User info request
+    /// </summary>
     public class UserInfoRequestDto
     {
         /// <summary>
@@ -23,8 +26,8 @@ namespace UserinfoApp.API.DTOs.Request
         /// User personal code
         /// </summary>
         [Required(ErrorMessage = "The {0} field is required.")]
-        [Range(10000000000, 99999999999, ErrorMessage = "Please enter a valid {0}.")]
-        public int? PersonalCode { get; set; }
+        [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        public string PersonalCode { get; set; }
 
         /// <summary>
         /// User phone number

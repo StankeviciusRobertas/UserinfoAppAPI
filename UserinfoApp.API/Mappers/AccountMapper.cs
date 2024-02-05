@@ -22,7 +22,7 @@ namespace UserinfoApp.API.Mappers
                 UserName = dto.UserName!,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Role = dto.Role!
+                //Role = dto.Role!
             };
         }
     }

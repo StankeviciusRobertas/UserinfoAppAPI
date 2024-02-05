@@ -138,8 +138,9 @@ namespace UserinfoApp.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PersonalCode")
-                        .HasColumnType("int");
+                    b.Property<string>("PersonalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()

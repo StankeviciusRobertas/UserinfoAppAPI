@@ -4,7 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using UserinfoApp.API.Mappers;
+using UserinfoApp.API.Mappers.Interfaces;
+using UserinfoApp.API.Services;
+using UserinfoApp.API.Services.Interfaces;
 using UserinfoApp.DAL;
+using UserinfoApp.BLL;
+using UserinfoApp.DAL.Repositories.Interfaces;
+using UserinfoApp.DAL.Repositories;
+using System;
 
 
 namespace UserinfoApp.API
@@ -16,7 +24,23 @@ namespace UserinfoApp.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddTransient<IJwtService, JwtService>();
+            builder.Services.AddTransient<IAccountMapper, AccountMapper>();
+            builder.Services.AddTransient<IUserInfoMapper, UserInfoMapper>();
+            builder.Services.AddTransient<IImageMapper, ImageMapper>();
 
+            builder.Services.AddTransient<IAccountRepository, AccountRepository>();
+            builder.Services.AddTransient<IImageRepository, ImageRepository>();
+            builder.Services.AddTransient<IUserinfoRepository, UserinfoRepository>();
+            builder.Services.AddTransient<IUserAdressRepository, UserAdressRepository>();
+
+            builder.Services.AddDbContext<UserinfoAppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+            });
+
+            builder.Services.ConfigureBusinessLayerServices();
+            //builder.Services.ConfigureDataLayerServices(builder.Configuration);
 
             builder.Services.AddHttpContextAccessor();
 
@@ -41,40 +65,35 @@ namespace UserinfoApp.API
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(opt =>
-            {
+            builder.Services.AddSwaggerGen(opt => {
                 opt.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "User info API",
                     Description = "An ASP.NET Core Web API for managing User info",
                 });
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header is using Bearer scheme. \r\n\r\n" +
+                               "Enter token. \r\n\r\n" +
+                               "Example: \"d5f41g85d1f52a\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+                opt.AddSecurityDefinition("Bearer", securitySchema);
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement { { securitySchema, new[] { "Bearer" } } });
+
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 opt.IncludeXmlComments(xmlPath);
-                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please ender valid JWT token",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT"
-                });
-                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference=new OpenApiReference
-                            {
-                                Type=ReferenceType.SecurityScheme,
-                                Id="Bearer"
-                            }
-                        },
-                        new List<string>()
-                    }
-                });
             });
 
             var app = builder.Build();
@@ -87,6 +106,14 @@ namespace UserinfoApp.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();
