@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
 using UserinfoApp.API.DTOs.Request;
 using UserinfoApp.API.DTOs.Results;
+using UserinfoApp.API.Mappers;
 using UserinfoApp.API.Mappers.Interfaces;
 using UserinfoApp.BLL.Services.Interfaces;
 using UserinfoApp.DAL.Repositories;
@@ -25,8 +27,16 @@ namespace UserinfoApp.API.Controllers
         private readonly IEmailService _emailService;
         private readonly int _userId;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserAdressMapper _userAdressMapper;
+        private readonly IUserAdressRepository _userAdressRepository;
 
-        public UserInfoController(ILogger<UserInfoController> logger, IUserinfoRepository userinfoRepository, IUserInfoMapper userInfoMapper, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
+        public UserInfoController(ILogger<UserInfoController> logger,
+            IUserinfoRepository userinfoRepository,
+            IUserInfoMapper userInfoMapper,
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor,
+            IUserAdressMapper userAdressMapper,
+            IUserAdressRepository userAdressRepository)
         {
             _logger = logger;
             _userinfoRepository = userinfoRepository;
@@ -34,6 +44,8 @@ namespace UserinfoApp.API.Controllers
             _emailService = emailService;
             _httpContextAccessor = httpContextAccessor;
             _userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            _userAdressMapper = userAdressMapper;
+            _userAdressRepository = userAdressRepository;
         }
 
         /// <summary>
@@ -58,8 +70,34 @@ namespace UserinfoApp.API.Controllers
             return Ok(dto);
         }
 
+        ///// <summary>
+        ///// creates userinfo
+        ///// </summary>
+        ///// <param name="req"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[Produces(MediaTypeNames.Application.Json)]
+        //[Consumes(MediaTypeNames.Application.Json)]
+        //public IActionResult Post(UserInfoRequestDto req)
+        //{
+        //    _logger.LogInformation($"Creating userInfo for user {_userId} with Title {req.Name}");
+        //    var entity = _userInfoMapper.Map(req);
+        //    _userinfoRepository.Add(entity);
+
+        //    var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
+        //    var isSent = _emailService.SendEmail(email, $"Created new UserInfo: {entity.Name}");
+        //    if (!isSent)
+        //    {
+        //        _logger.LogError($"Failed to send email to {email}");
+        //    }
+
+        //    return Created(nameof(Get), new { id = entity.Id });
+        //}
+
         /// <summary>
-        /// creates userinfo
+        /// creates userinfo and adress
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
@@ -68,20 +106,22 @@ namespace UserinfoApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Post(UserInfoRequestDto req)
+        public IActionResult Post(CreateUserWithAdressRequestDto req)
         {
-            _logger.LogInformation($"Creating userInfo for user {_userId} with Title {req.Name}");
-            var entity = _userInfoMapper.Map(req);
-            _userinfoRepository.Add(entity);
+            _logger.LogInformation($"Creating userInfo for user {_userId} with Title {req.UserInfo.Name}");
+            var userInfoEntity = _userInfoMapper.Map(req.UserInfo);
+            var userAdressEntity = _userAdressMapper.Map(req.UserAdress);
+            _userinfoRepository.Add(userInfoEntity);
+            _userAdressRepository.Add(userAdressEntity);
 
             var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
-            var isSent = _emailService.SendEmail(email, $"Created new UserInfo: {entity.Name}");
+            var isSent = _emailService.SendEmail(email, $"Created new UserInfo: {userInfoEntity.Name}");
             if (!isSent)
             {
                 _logger.LogError($"Failed to send email to {email}");
             }
 
-            return Created(nameof(Get), new { id = entity.Id });
+            return Created(nameof(Get), new { id = userInfoEntity.Id });
         }
 
         /// <summary>

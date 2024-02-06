@@ -33,6 +33,7 @@ namespace UserinfoApp.API
             builder.Services.AddTransient<IImageRepository, ImageRepository>();
             builder.Services.AddTransient<IUserinfoRepository, UserinfoRepository>();
             builder.Services.AddTransient<IUserAdressRepository, UserAdressRepository>();
+            builder.Services.AddTransient<IUserAdressMapper, UserAdressMapper>();  
 
             builder.Services.AddDbContext<UserinfoAppDbContext>(options =>
             {
