@@ -21,7 +21,7 @@ namespace UserinfoApp.DAL.Entities
         [ForeignKey(nameof(Account))]
         public int AccountId { get; set; }
         public Account Account { get; set; } = null!;
-        public UserAdress UserAdress { get; set; } = null!;
+        //public UserAdress UserAdress { get; set; } = null!;
         public ICollection<Image> Images { get; set; } = null!;
     }
 }

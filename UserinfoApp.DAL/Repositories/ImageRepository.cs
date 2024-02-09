@@ -19,14 +19,14 @@ namespace UserinfoApp.DAL.Repositories
         override public IQueryable<Image> GetAll()
         {
             // Using Include to eager load UserInfo navigation property
-            return _context.Images.Include(i => i.UserInfo);
+            return _context.Images.Include(i => i.Id);
         }
 
         // Override method to get a specific Image entity by its id, including the related UserInfo entity
         public override Image? Get(int id)
         {
             // Using Include to eagerl load UserInfo navigation property
-            return _context.Images.Include(i => i.UserInfo).FirstOrDefault(i => i.Id == id);
+            return _context.Images.FirstOrDefault(i => i.AccountId == id);
         }
     }
 }

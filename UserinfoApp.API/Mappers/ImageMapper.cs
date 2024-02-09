@@ -32,7 +32,7 @@ namespace UserinfoApp.API.Mappers
             {
                 Name = dto.Name!,
                 Description = dto.Description!,
-                UserinfoId = userinfoId,
+                AccountId = userinfoId,
                 ImageBytes = imageBytes,
             };
         }

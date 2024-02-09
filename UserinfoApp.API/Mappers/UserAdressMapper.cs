@@ -40,7 +40,7 @@ namespace UserinfoApp.API.Mappers
                 Street = userAdress.Street,
                 HouseNumber = userAdress.HouseNumber,
                 FlatNumber = userAdress.FlatNumber,
-                UserInfoId = accountId
+                AccountId = accountId
             };
         }
 

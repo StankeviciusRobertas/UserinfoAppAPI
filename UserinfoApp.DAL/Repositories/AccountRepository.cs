@@ -18,11 +18,11 @@ namespace UserinfoApp.DAL.Repositories
         }
 
         // Method to create a new account in the database
-        public int Create(Account model)
+        public string Create(Account model)
         {
             _context.Accounts.Add(model);
             _context.SaveChanges();
-            return model.Id;
+            return model.UserName;
         }
 
         // Method to retrieve an account based on the provided username
@@ -31,10 +31,20 @@ namespace UserinfoApp.DAL.Repositories
             return _context.Accounts.FirstOrDefault(x => x.UserName == userName);
         }
 
+        public Account? GetById(int id)
+        {
+            return _context.Accounts.FirstOrDefault(x => x.Id == id);
+        }
+
         // Method to check if an account with the given id exists in the database
         public bool Exists(int id)
         {
             return _context.Accounts.Any(x => x.Id == id);
+        }
+
+        public bool ExistsUserName(string userName)
+        {
+            return _context.Accounts.Any(x => x.UserName == userName);
         }
 
         // Method to delete an account from the database based on the provided id

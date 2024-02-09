@@ -51,19 +51,19 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// gets a userinfo
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{accountId}")]
         [ProducesResponseType(typeof(UserInfoResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Get(int id)
+        public IActionResult Get(int accountId)
         {
-            _logger.LogInformation($"Getting userInfo with id {id} for user {_userId}");
-            var entity = _userinfoRepository.Get(id);
+            _logger.LogInformation($"Getting userInfo with id {accountId} for user {_userId}");
+            var entity = _userinfoRepository.Get(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id {id} not found");
+                _logger.LogInformation($"User with id {accountId} not found");
                 return NotFound();
             }
             var dto = _userInfoMapper.Map(entity);
@@ -101,18 +101,16 @@ namespace UserinfoApp.API.Controllers
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("{accountId}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Post(CreateUserWithAdressRequestDto req)
+        public IActionResult Post(UserInfoRequestDto req)
         {
-            _logger.LogInformation($"Creating userInfo for user {_userId} with Title {req.UserInfo.Name}");
-            var userInfoEntity = _userInfoMapper.Map(req.UserInfo);
-            var userAdressEntity = _userAdressMapper.Map(req.UserAdress);
+            _logger.LogInformation($"Creating userInfo for user {_userId} with Title {req.Name}");
+            var userInfoEntity = _userInfoMapper.Map(req);
             _userinfoRepository.Add(userInfoEntity);
-            _userAdressRepository.Add(userAdressEntity);
 
             var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
             var isSent = _emailService.SendEmail(email, $"Created new UserInfo: {userInfoEntity.Name}");
@@ -127,28 +125,28 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// updates a user info
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{accountId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Put(int id, UserInfoRequestDto req)
+        public IActionResult Put(int accountId, UserInfoRequestDto req)
         {
             _logger.LogInformation($"Updating user info for user {_userId}");
-            var entity = _userinfoRepository.Get(id);
+            var entity = _userinfoRepository.Get(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id {id} not found");
+                _logger.LogInformation($"User with id {accountId} not found");
                 return NotFound();
             }
             if (entity.AccountId != _userId)
             {
-                _logger.LogInformation($"User with id {id} is forbidden");
+                _logger.LogInformation($"User with id {accountId} is forbidden");
                 return Forbid();
             }
 

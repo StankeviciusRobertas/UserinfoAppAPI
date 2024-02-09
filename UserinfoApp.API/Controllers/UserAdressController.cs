@@ -61,7 +61,7 @@ namespace UserinfoApp.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns> 
 
-        [HttpPost]
+        [HttpPost("{userInfoId}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -78,28 +78,28 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// updates a user adress
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{accountId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Put(int id, UserAdressRequestDto req)
+        public IActionResult Put(int accountId, UserAdressRequestDto req)
         {
-            _logger.LogInformation($"Updating user adress with id {id} for user {_userId}");
-            var entity = _userAdressRepository.Get(id);
+            _logger.LogInformation($"Updating user adress with id {accountId} for user {_userId}");
+            var entity = _userAdressRepository.GetByAccountId(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id {id} not found");
+                _logger.LogInformation($"User with id {accountId} not found");
                 return NotFound();
             }
-            if (entity.Id != _userId)
+            if (entity.AccountId != accountId)
             {
-                _logger.LogInformation($"User with id {id} is forbidden");
+                _logger.LogInformation($"User with id {accountId} is forbidden");
                 return Forbid();
             }
 

@@ -27,6 +27,29 @@ namespace UserinfoApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UsersAdress",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FlatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersAdress", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UsersAdress_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsersInfo",
                 columns: table => new
                 {
@@ -59,51 +82,39 @@ namespace UserinfoApp.DAL.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageBytes = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    UserinfoId = table.Column<int>(type: "int", nullable: false)
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    UserInfoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Images", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Images_UsersInfo_UserinfoId",
-                        column: x => x.UserinfoId,
-                        principalTable: "UsersInfo",
+                        name: "FK_Images_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UsersAdress",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FlatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserInfoId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsersAdress", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UsersAdress_UsersInfo_UserInfoId",
+                        name: "FK_Images_UsersInfo_UserInfoId",
                         column: x => x.UserInfoId,
                         principalTable: "UsersInfo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_UserinfoId",
+                name: "IX_Images_AccountId",
                 table: "Images",
-                column: "UserinfoId");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsersAdress_UserInfoId",
+                name: "IX_Images_UserInfoId",
+                table: "Images",
+                column: "UserInfoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersAdress_AccountId",
                 table: "UsersAdress",
-                column: "UserInfoId",
+                column: "AccountId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

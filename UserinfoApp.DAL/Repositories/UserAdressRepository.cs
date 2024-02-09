@@ -28,5 +28,18 @@ namespace UserinfoApp.DAL.Repositories
             // Using Include to eagerly load UserInfo navigation property
             return _context.UsersAdress.Find(id);
         }
+
+        public UserAdress? GetByAccountId(int accountId)
+        {
+            // Using Include to eagerly load UserInfo navigation property
+            return _context.UsersAdress.FirstOrDefault((UserAdress x) => x.AccountId == accountId);
+        }
+
+        public override void Add(UserAdress entity)
+        {
+            // Using AddRange to add a range of entities to the database
+            _context.UsersAdress.AddRange(entity);
+            _context.SaveChanges();
+        }
     }
 }

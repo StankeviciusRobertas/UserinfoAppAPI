@@ -48,6 +48,11 @@ namespace UserinfoApp.API.Controllers
         {
             _logger.LogInformation($"Creating account for {req.UserName}");
             var account = _mapper.Map(req);
+            if (_repository.ExistsUserName(req.UserName!))
+            {
+                _logger.LogWarning($"User {req.UserName} already exists");
+                return BadRequest($"User `{req.UserName}` already exists");
+            }
             var userId = _repository.Create(account);
             _logger.LogInformation($"Account for {req.UserName} created with id {userId}");
             return Created("", new { id = userId });
@@ -70,7 +75,7 @@ namespace UserinfoApp.API.Controllers
             if (account == null)
             {
                 _logger.LogWarning($"User {req.UserName} not found");
-                return BadRequest("User nor found");
+                return BadRequest("User not found");
             }
 
             var isPasswordValid = _service.VerifyPasswordHash(req.Password, account.PasswordHash, account.PasswordSalt);

@@ -9,7 +9,7 @@ using UserinfoApp.DAL.Repositories.Interfaces;
 
 namespace UserinfoApp.DAL.Repositories
 {
-    public class UserinfoRepository : Repository<UserInfo>, IUserinfoRepository 
+    public class UserinfoRepository : Repository<UserInfo>, IUserinfoRepository
     {
         public UserinfoRepository(UserinfoAppDbContext context) : base(context)
         {
@@ -24,10 +24,16 @@ namespace UserinfoApp.DAL.Repositories
         }
 
         // Override method to get a specific UserInfo entity by its id, including the related Images entities
-        public override UserInfo? Get(int id)
+        public override UserInfo? Get(int accountId)
         {
             // Using Include to eagerly load Images navigation property
-            return _context.UsersInfo.Include(x => x.Images).FirstOrDefault(x => x.Id == id);
+            return _context.UsersInfo.Include(x => x.Images).FirstOrDefault(x => x.AccountId == accountId);
+        }
+
+        public UserInfo? GetById(int userId)
+        {
+            // Using Include to eagerly load Images navigation property
+            return _context.UsersInfo.Include(x => x.Images).FirstOrDefault(x => x.Id == userId);
         }
     }
 }

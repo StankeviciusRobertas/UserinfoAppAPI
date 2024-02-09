@@ -16,8 +16,8 @@ namespace UserinfoApp.DAL.Entities
         public string Description { get; set; } = null!;
         public byte[] ImageBytes { get; set; } = null!;
 
-        [ForeignKey(nameof(UserInfo))]
-        public int UserinfoId { get; set; }
-        public UserInfo UserInfo { get; set; } = null!;
+        [ForeignKey(nameof(Account))]
+        public int AccountId { get; set; }
+        public Account Account { get; set; } = null!;
     }
 }

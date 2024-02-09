@@ -9,9 +9,11 @@ namespace UserinfoApp.DAL.Repositories.Interfaces
 {
     public interface IAccountRepository
     {
-        int Create(Account model);
+        string Create(Account model);
         void Delete(int id);
         bool Exists(int id);
+        bool ExistsUserName(string userName);
         Account? Get(string userName);
+        Account? GetById(int id);
     }
 }

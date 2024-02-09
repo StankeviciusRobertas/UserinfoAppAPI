@@ -12,8 +12,8 @@ namespace UserinfoApp.DAL.Entities
         public string HouseNumber { get; set; } = null!;
         public string FlatNumber { get; set; } = null!;
 
-        [ForeignKey(nameof(UserInfo))]
-        public int UserInfoId { get; set; }
-        public UserInfo UserInfo { get; set; } = null!;
+        [ForeignKey(nameof(Account))]
+        public int AccountId { get; set; }
+        public Account Account { get; set; } = null!;
     }
 }
