@@ -23,16 +23,16 @@ namespace UserinfoApp.API.Mappers
         }
 
 
-        public Image Map(ImageUploadRequestDto dto, int userinfoId)
+        public Image Map(ImageUploadRequestDto dto, int accountId)
         {
             using var stream = new MemoryStream();
             dto.Image.CopyTo(stream);
             var imageBytes = stream.ToArray();
             return new Image
             {
-                Name = dto.Name!,
-                Description = dto.Description!,
-                AccountId = userinfoId,
+                Name = dto.Image.Name,
+                Description = dto.Image.ContentType,
+                AccountId = accountId,
                 ImageBytes = imageBytes,
             };
         }

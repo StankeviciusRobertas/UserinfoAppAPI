@@ -36,19 +36,19 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// gets a user adress
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{accountId}")]
         [ProducesResponseType(typeof(UserAdressResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Get(int id)
+        public IActionResult Get(int accountId)
         {
-            _logger.LogInformation($"Getting userAdress with id {id} for user {_userId}");
-            var entity = _userAdressRepository.Get(id);
+            _logger.LogInformation($"Getting userAdress with id {accountId} for user {_userId}");
+            var entity = _userAdressRepository.GetByAccountId(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id {id} not found");
+                _logger.LogInformation($"User with id {accountId} not found");
                 return NotFound();
             }
             var dto = _userAdressMapper.Map(entity);
@@ -61,7 +61,7 @@ namespace UserinfoApp.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns> 
 
-        [HttpPost("{userInfoId}")]
+        [HttpPost("{accountId}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -112,25 +112,25 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// deletes a user adress
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{accountId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int accountId)
         {
-            _logger.LogInformation($"Deleting user info with id {id} for user {_userId}");
-            var entity = _userAdressRepository.Get(id);
+            _logger.LogInformation($"Deleting user info with id {accountId} for user {_userId}");
+            var entity = _userAdressRepository.GetByAccountId(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id  {id} not found");
+                _logger.LogInformation($"User with id  {accountId} not found");
                 return NotFound();
             }
-            if (entity.Id != _userId)
+            if (entity.AccountId != accountId)
             {
-                _logger.LogInformation($"User with id  {id} is forbidden");
+                _logger.LogInformation($"User with id  {accountId} is forbidden");
                 return Forbid();
             }
             _userAdressRepository.Delete(entity);

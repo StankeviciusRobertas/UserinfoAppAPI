@@ -69,7 +69,7 @@ namespace UserinfoApp.API.Controllers
                 _logger.LogInformation($"Image {accountId} is forbidden for user {_userId}");
                 return Forbid();
             }
-            return File(entity.ImageBytes, $"image/png");
+            return File(entity.ImageBytes, "image/jpg");
         }
 
         /// <summary>
@@ -78,9 +78,9 @@ namespace UserinfoApp.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("/api/UserInfo/{accountId}/[controller]")]
+        [Route("/api/Image/{accountId}/[controller]")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Post([FromRoute] int accountId, [FromForm] ImageUploadRequestDto req)
         {
@@ -96,11 +96,15 @@ namespace UserinfoApp.API.Controllers
                 _logger.LogInformation($"For user {_userId} is forbidden");
                 return Forbid();
             }
-
+            var imageEntity = _imageRepository.Get(accountId);
+            if (imageEntity != null)
+            {
+                _imageRepository.Delete(imageEntity);
+            }
             var image = _mapper.Map(req, accountId);
-            _imageRepository.Add(image);
+            _imageRepository.AddImage(image);
 
-            return Created(nameof(Get), new { id = image.Id });
+            return Ok(image.Id);
         }
 
         [HttpDelete("{id}")]

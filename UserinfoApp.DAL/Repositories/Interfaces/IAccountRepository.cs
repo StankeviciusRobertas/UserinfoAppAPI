@@ -14,6 +14,7 @@ namespace UserinfoApp.DAL.Repositories.Interfaces
         bool Exists(int id);
         bool ExistsUserName(string userName);
         Account? Get(string userName);
+        List<Account> GetAll();
         Account? GetById(int id);
     }
 }

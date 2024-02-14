@@ -159,25 +159,25 @@ namespace UserinfoApp.API.Controllers
         /// <summary>
         /// deletes a user info
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{accountId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int accountId)
         {
-            _logger.LogInformation($"Deleting user info with id {id} for user {_userId}");
-            var entity = _userinfoRepository.Get(id);
+            _logger.LogInformation($"Deleting user info with id {accountId} for user {_userId}");
+            var entity = _userinfoRepository.Get(accountId);
             if (entity == null)
             {
-                _logger.LogInformation($"User with id  {id} not found");
+                _logger.LogInformation($"User with id  {accountId} not found");
                 return NotFound();
             }
             if (entity.AccountId != _userId)
             {
-                _logger.LogInformation($"User with id  {id} is forbidden");
+                _logger.LogInformation($"User with id  {accountId} is forbidden");
                 return Forbid();
             }
             _userinfoRepository.Delete(entity);

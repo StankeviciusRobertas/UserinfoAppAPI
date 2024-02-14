@@ -12,8 +12,8 @@ namespace UserinfoApp.DAL.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public string? Name { get; set; } = null!;
+        public string? Description { get; set; } 
         public byte[] ImageBytes { get; set; } = null!;
 
         [ForeignKey(nameof(Account))]

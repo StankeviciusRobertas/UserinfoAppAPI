@@ -57,5 +57,10 @@ namespace UserinfoApp.DAL.Repositories
                 _context.SaveChanges();
             }
         }
+
+        public List<Account> GetAll()
+        {
+            return _context.Accounts.ToList();
+        }
     }
 }

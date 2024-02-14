@@ -96,8 +96,8 @@ namespace UserinfoApp.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
@@ -111,5 +111,26 @@ namespace UserinfoApp.API.Controllers
             _repository.Delete(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Get all user accounts. for admin only.
+        /// </summary>
+        /// <permission cref="Admin"></permission>"
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetAll()
+        {
+            _logger.LogInformation("Getting all accounts");
+            var accounts = _repository.GetAll();
+            if (accounts == null)
+            {
+                _logger.LogInformation("No accounts found");
+                return NotFound();
+            }
+            return Ok(accounts);
+        }   
     }
 }

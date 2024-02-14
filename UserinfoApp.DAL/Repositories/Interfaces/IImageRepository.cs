@@ -5,6 +5,6 @@ namespace UserinfoApp.DAL.Repositories.Interfaces
 {
     public interface IImageRepository : IRepository<Image>
     {
-        
+        void AddImage(Image entity);
     }
 }

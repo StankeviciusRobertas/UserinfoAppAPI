@@ -28,5 +28,11 @@ namespace UserinfoApp.DAL.Repositories
             // Using Include to eagerl load UserInfo navigation property
             return _context.Images.FirstOrDefault(i => i.AccountId == id);
         }
+
+        public void AddImage(Image entity)
+        {
+            _dbSet.Add(entity);
+            _context.SaveChanges();
+        }   
     }
 }
