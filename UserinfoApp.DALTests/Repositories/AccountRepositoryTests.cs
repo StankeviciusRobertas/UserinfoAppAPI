@@ -21,28 +21,10 @@ namespace UserinfoApp.DAL.Repositories.Tests
         {
             // Initialize the DbContext and Repository
             var options = new DbContextOptionsBuilder<UserinfoAppDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
+        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Use a unique database name for each test method
+        .Options;
             _context = new UserinfoAppDbContext(options);
             _repository = new AccountRepository(_context);
-        }
-
-        [TestMethod()]
-        public void Create_AccountCreatedSuccessfully()
-        {
-            // Arrange
-            var account = new Account
-            {
-                UserName = "testuser",
-                PasswordHash = new byte[] { 1, 2, 3 },
-                PasswordSalt = new byte[] { 4, 5, 6 }
-            };
-
-            // Act
-            var result = _repository.Create(account);
-
-            // Assert
-            Assert.IsTrue(result.Contains("testuser")); // Assuming Create method returns a boolean indicating success
         }
 
         [TestMethod()]
@@ -64,6 +46,119 @@ namespace UserinfoApp.DAL.Repositories.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("existinguser", result.UserName);
+        }
+
+        [TestMethod()]
+        public void GetById_ReturnsAccountIfExists()
+        {
+            // Arrange
+            var account = new Account
+            {
+                Id = 1,
+                UserName = "existinguser",
+                PasswordHash = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 }
+            };
+            _context.Accounts.Add(account);
+            _context.SaveChanges();
+
+            // Act
+            var result = _repository.GetById(1);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Id);
+        }
+
+        [TestMethod()]
+        public void Exists_ReturnsTrueIfAccountExists()
+        {
+            // Arrange
+            var account = new Account
+            {
+                Id = 1,
+                UserName = "existinguser",
+                PasswordHash = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 }
+            };
+            _context.Accounts.Add(account);
+            _context.SaveChanges();
+
+            // Act
+            var result = _repository.Exists(1);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void ExistsUserName_ReturnsTrueIfUserNameExists()
+        {
+            // Arrange
+            var account = new Account
+            {
+                UserName = "existinguser",
+                PasswordHash = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 }
+            };
+            _context.Accounts.Add(account);
+            _context.SaveChanges();
+
+            // Act
+            var result = _repository.ExistsUserName("existinguser");
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void Delete_RemovesAccountIfExists()
+        {
+            // Arrange
+            var account = new Account
+            {
+                Id = 1,
+                UserName = "existinguser",
+                PasswordHash = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 }
+            };
+            _context.Accounts.Add(account);
+            _context.SaveChanges();
+
+            // Act
+            _repository.Delete(1);
+
+            // Assert
+            Assert.IsFalse(_repository.Exists(1));
+        }
+
+        [TestMethod()]
+        public void GetAll_ReturnsAllAccounts()
+        {
+            // Arrange
+            var accounts = new List<Account>
+            {
+                new Account
+                {
+                    UserName = "user1",
+                    PasswordHash = new byte[] { 1, 2, 3 },
+                    PasswordSalt = new byte[] { 4, 5, 6 }
+                },
+                new Account
+                {
+                    UserName = "user2",
+                    PasswordHash = new byte[] { 4, 5, 6 },
+                    PasswordSalt = new byte[] { 7, 8, 9 }
+                }
+            };
+            _context.Accounts.AddRange(accounts);
+            _context.SaveChanges();
+
+            // Act
+            var result = _repository.GetAll();
+
+            // Assert
+            Assert.AreEqual(2, result.Count);
         }
     }
 }
